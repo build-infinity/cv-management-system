@@ -1,15 +1,15 @@
 using CvManagementSystem.Application.Abstractions;
 
 
-namespace CvManagementSystem.Infrastructre.Security;
+namespace CvManagementSystem.Infrastructure.Security;
 public class BCryptPasswordHasher : IPasswordHasher
 {
-    public string Hash(string passsword)
+    public string Hash(string password)
     {
-        return BCrypt.Net.BCrypt.HashPassword(passsword);
+        return BCrypt.Net.BCrypt.HashPassword(password);
     }
-    public bool Verify(string passsword, string hashPassword)
+    public bool Verify(string password, string hashPassword)
     {
-        return BCrypt.Net.BCrypt.Verify(passsword, hashPassword);
+        return BCrypt.Net.BCrypt.Verify(password, hashPassword);
     }
 }

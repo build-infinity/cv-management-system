@@ -1,5 +1,5 @@
 using CvManagementSystem.Application;
-using CvManagementSystem.Infrastructre;
+using CvManagementSystem.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
