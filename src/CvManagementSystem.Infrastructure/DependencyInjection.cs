@@ -7,12 +7,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using CvManagementSystem.Infrastructure.Persistence;
+using CvManagementSystem.Infrastructure.Persistence.Repositories;
 
 namespace CvManagementSystem.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
         services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection("Jwt"));
