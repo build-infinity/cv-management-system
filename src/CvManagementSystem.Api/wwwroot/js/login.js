@@ -37,7 +37,7 @@
     signingUp = signup;
     const label = signup ? 'Sign up' : 'Sign in';
     title.textContent = label;
-    document.title = label + ' — CV Workspace';
+    document.title = label;
     subtitle.textContent = signup ? 'Create your account.' : 'Sign in to your account.';
     submit.textContent = label;
     document.getElementById('name-fields').hidden = !signup;
