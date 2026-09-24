@@ -8,3 +8,4 @@ bin/
 .idea/
 
 .env
+appsettings.Development.json

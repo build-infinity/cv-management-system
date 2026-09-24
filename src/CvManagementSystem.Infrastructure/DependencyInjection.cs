@@ -23,10 +23,16 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
-        services.AddOptions<SmtpOptions>().Bind(configuration.GetSection("Smtp"));
+        services.AddOptions<BrevoOptions>().Bind(configuration.GetSection("Brevo"));
         services.AddOptions<EmailVerificationOptions>().Bind(configuration.GetSection("EmailVerification"));
         services.AddScoped<IEmailVerificationService, EmailVerificationService>();
-        services.AddScoped<IEmailSender, SmtpEmailSender>();
+        services.AddHttpClient<IEmailSender, BrevoEmailSender>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.brevo.com/");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        })
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false })
+            .RedactLoggedHeaders(["api-key"]);
         services.AddHostedService<EmailBackgroundService>();
 
         services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
