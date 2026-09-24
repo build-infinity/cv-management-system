@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="same-origin">
+  <meta name="color-scheme" content="light">
+  <title>Kirish — CV Workspace</title>
+  <link rel="stylesheet" href="/css/login.css">
+  <script src="/js/login.js" defer></script>
+</head>
+<body>
+  <main class="layout">
+    <aside class="story" aria-label="CV Workspace haqida">
+      <a class="brand" href="/login.html" aria-label="CV Workspace bosh sahifasi"><span class="brand-icon">cv<span>·</span></span><span>CV <strong>Workspace</strong></span></a>
+      <div class="story-content">
+        <p class="eyebrow"><span></span> KARYERANGIZ UCHUN BIR JOY</p>
+        <h1>Keyingi imkoniyat<br>sizdan boshlanadi<span>.</span></h1>
+        <p class="intro">Tajribangiz, ko‘nikmalaringiz va yutuqlaringiz.<br>Professional yo‘lingizni bir joyda jamlang.</p>
+        <div class="preview" aria-hidden="true">
+          <div class="preview-top"><span class="document-icon">↗</span><span>MENING PROFESSIONAL PROFILIM</span><span class="dots">•••</span></div>
+          <div class="profile"><div class="avatar">AK</div><div><h2>Aziza Karimova</h2><p>Product Designer</p></div><span class="profile-check">✓</span></div>
+          <div class="preview-rule"></div>
+          <div class="preview-heading"><span>TAJRIBA</span><span>2022 — hozir</span></div>
+          <div class="preview-line wide"></div><div class="preview-line short"></div>
+          <div class="preview-heading skills-heading"><span>KO‘NIKMALAR</span></div>
+          <div class="tags"><span>UI / UX</span><span>Figma</span><span>Design systems</span></div>
+        </div>
+        <div class="story-note"><span class="note-icon">✦</span><p>Yangi imkoniyatlar uchun<br><strong>o‘zingizni eng yaxshi tomondan ko‘rsating.</strong></p></div>
+      </div>
+      <div class="story-footer"><span>CV MANAGEMENT SYSTEM</span><span>Har bir tajriba muhim.</span></div>
+    </aside>
+    <section class="login-side" aria-labelledby="login-title">
+      <div class="top-note"><span class="small-dot"></span> Shaxsiy ish maydoningiz</div>
+      <div class="login-card">
+        <div class="welcome-icon" aria-hidden="true">↗</div>
+        <p class="eyebrow form-eyebrow">YANA BIRGA EKANIMIZDAN XURSANDMIZ</p>
+        <h2 id="login-title">Xush kelibsiz.</h2>
+        <p class="subtitle" id="login-subtitle">Davom etish uchun hisobingizga kiring.</p>
+        <div id="feedback" class="feedback" role="alert" hidden></div>
+        <div id="auth-controls">
+          <a id="google-login" class="google-button" href="/api/auth/google?returnToLogin=true"><span class="google-mark" aria-hidden="true">G</span>Google orqali kirish</a>
+          <div class="divider"><span></span><span>yoki email orqali</span><span></span></div>
+          <form id="login-form">
+            <div class="field"><label for="email">Email manzili</label><input id="email" name="email" type="email" autocomplete="username" placeholder="siz@example.com" maxlength="254" required></div>
+            <div class="field"><label for="password">Parol</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Parolingizni kiriting" maxlength="72" required><button id="toggle-password" class="password-toggle" type="button" aria-label="Parolni ko‘rsatish" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+            <button id="submit-login" class="primary-button" type="submit"><span>Kirish</span><span aria-hidden="true">→</span></button>
+          </form>
+          <div class="resend"><p>Tasdiqlash xati kelmadimi?</p><button id="resend-email" class="text-button" type="button">Xatni qayta yuborish <span aria-hidden="true">↗</span></button></div>
+        </div>
+        <div id="success-panel" class="success-panel" hidden tabindex="-1"><span class="success-icon" aria-hidden="true">✓</span><h3>Hisobingizga kirdingiz</h3><p>Shaxsiy ish maydoningiz uchun kirish tasdiqlandi.</p><button id="switch-account" class="text-button" type="button">Boshqa hisob bilan kirish</button></div>
+        <p class="security-note"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Ma’lumotlaringiz — faqat sizniki.</p>
+      </div>
+      <footer class="login-footer"><span>© <span id="year">2026</span> CV Workspace</span><span>Oldinga bir qadam.</span></footer>
+    </section>
+  </main>
+</body>
+</html>

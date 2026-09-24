@@ -61,12 +61,12 @@ public class AuthController(IAuthService authService) : BaseApiController
     }
 
     [HttpGet("google")]
-    public async Task<IActionResult> GoogleSignIn()
+    public async Task<IActionResult> GoogleSignIn([FromQuery] bool returnToLogin = false)
     {
         await HttpContext.SignOutAsync(AuthCookies.ExternalScheme);
         return Challenge(new AuthenticationProperties
         {
-            RedirectUri = Url.Action(nameof(GoogleCallback)),
+            RedirectUri = returnToLogin ? "/login.html?google=callback" : Url.Action(nameof(GoogleCallback)),
             IsPersistent = false
         }, GoogleDefaults.AuthenticationScheme);
     }

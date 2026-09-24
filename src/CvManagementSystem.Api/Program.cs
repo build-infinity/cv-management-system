@@ -22,10 +22,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/", () => Results.Redirect("/login.html"));
+app.MapGet("/login", () => Results.Redirect("/login.html"));
 
 app.Run();

@@ -62,6 +62,11 @@ public static class DependencyInjection
                 {
                     context.HandleResponse();
                     await context.HttpContext.SignOutAsync(AuthCookies.ExternalScheme);
+                    if (context.Properties?.RedirectUri == "/login.html?google=callback")
+                    {
+                        context.Response.Redirect("/login.html?google=error");
+                        return;
+                    }
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await context.Response.WriteAsJsonAsync(new { message = "Google authentication failed or was cancelled." });
                 };
