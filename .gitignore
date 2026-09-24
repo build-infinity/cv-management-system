@@ -9,3 +9,4 @@ bin/
 
 .env
 appsettings.Development.json
+secret/
