@@ -6,9 +6,18 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace CvManagementSystem.Infrastructure.Email;
-public class EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<EmailBackgroundService> logger)
-    : BackgroundService
+
+public class EmailBackgroundService : BackgroundService
 {
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<EmailBackgroundService> _logger;
+
+    public EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<EmailBackgroundService> logger)
+    {
+        _scopeFactory = scopeFactory;
+        _logger = logger;
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -16,7 +25,9 @@ public class EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<E
             try
             {
                 if (await SendNextAsync(stoppingToken))
+                {
                     continue;
+                }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
@@ -24,7 +35,7 @@ public class EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<E
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "Email queue processing failed.");
+                _logger.LogError(exception, "Email queue processing failed.");
             }
 
             try
@@ -40,7 +51,7 @@ public class EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<E
 
     private async Task<bool> SendNextAsync(CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var scope = _scopeFactory.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var sender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
@@ -55,7 +66,9 @@ public class EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<E
             """).ToListAsync(cancellationToken);
         var message = messages.SingleOrDefault();
         if (message is null)
+        {
             return false;
+        }
 
         message.Attempts++;
         try
@@ -70,8 +83,9 @@ public class EmailBackgroundService(IServiceScopeFactory scopeFactory, ILogger<E
         }
         catch (Exception exception)
         {
-            message.NextAttemptAtUtc = DateTime.UtcNow.AddMinutes(Math.Min(60, Math.Pow(2, Math.Min(message.Attempts, 6))));
-            logger.LogWarning("Email {EmailId} attempt {Attempt} failed ({ErrorType}); it will be retried.",
+            var retryDelayMinutes = Math.Min(60, Math.Pow(2, Math.Min(message.Attempts, 6)));
+            message.NextAttemptAtUtc = DateTime.UtcNow.AddMinutes(retryDelayMinutes);
+            _logger.LogWarning("Email {EmailId} attempt {Attempt} failed ({ErrorType}); it will be retried.",
                 message.Id, message.Attempts, exception.GetType().Name);
         }
 

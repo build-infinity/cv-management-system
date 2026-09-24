@@ -1,6 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using CvManagementSystem.Application.Interfaces;
 using CvManagementSystem.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CvManagementSystem.Application;
 public static class DependencyInjection

@@ -3,11 +3,21 @@ using CvManagementSystem.Application.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace CvManagementSystem.Infrastructure.Email;
-public class BrevoEmailSender(HttpClient httpClient, IOptions<BrevoOptions> options) : IEmailSender
+
+public class BrevoEmailSender : IEmailSender
 {
+    private readonly HttpClient _httpClient;
+    private readonly IOptions<BrevoOptions> _options;
+
+    public BrevoEmailSender(HttpClient httpClient, IOptions<BrevoOptions> options)
+    {
+        _httpClient = httpClient;
+        _options = options;
+    }
+
     public async Task SendAsync(string recipient, string subject, string body, CancellationToken cancellationToken = default)
     {
-        var settings = options.Value;
+        var settings = _options.Value;
         using var request = new HttpRequestMessage(HttpMethod.Post, "v3/smtp/email");
         request.Headers.Add("api-key", settings.ApiKey);
         request.Headers.Accept.ParseAdd("application/json");
@@ -19,7 +29,7 @@ public class BrevoEmailSender(HttpClient httpClient, IOptions<BrevoOptions> opti
             textContent = body
         });
 
-        using var response = await httpClient.SendAsync(request, cancellationToken);
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
     }
 }

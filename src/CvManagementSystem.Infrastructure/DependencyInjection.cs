@@ -1,28 +1,41 @@
+using System.Text;
 using CvManagementSystem.Application.Abstractions;
-using CvManagementSystem.Infrastructure.Security;
 using CvManagementSystem.Infrastructure.Email;
-using Microsoft.Extensions.DependencyInjection;
+using CvManagementSystem.Infrastructure.Persistence.Repositories;
+using CvManagementSystem.Infrastructure.Persistence;
+using CvManagementSystem.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
-using CvManagementSystem.Infrastructure.Persistence;
-using CvManagementSystem.Infrastructure.Persistence.Repositories;
 
 namespace CvManagementSystem.Infrastructure;
+
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    {
+        AddPersistence(services, configuration);
+        AddEmail(services, configuration);
+        AddSecurity(services, configuration);
+
+        return services;
+    }
+
+    private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
+    }
 
+    private static void AddEmail(IServiceCollection services, IConfiguration configuration)
+    {
         services.AddOptions<BrevoOptions>().Bind(configuration.GetSection("Brevo"));
         services.AddOptions<EmailVerificationOptions>().Bind(configuration.GetSection("EmailVerification"));
         services.AddScoped<IEmailVerificationService, EmailVerificationService>();
@@ -34,13 +47,15 @@ public static class DependencyInjection
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false })
             .RedactLoggedHeaders(["api-key"]);
         services.AddHostedService<EmailBackgroundService>();
+    }
 
+    private static void AddSecurity(IServiceCollection services, IConfiguration configuration)
+    {
         services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection("Jwt"));
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddOptions<GoogleAuthOptions>().Bind(configuration.GetSection("Google"));
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer()
@@ -97,7 +112,5 @@ public static class DependencyInjection
                 };
             });
         services.AddAuthorization();
-
-        return services;
     }
 }

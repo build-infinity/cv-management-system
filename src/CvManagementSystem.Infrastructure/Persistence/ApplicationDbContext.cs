@@ -1,10 +1,15 @@
-using CvManagementSystem.Domain.Entities;
 using CvManagementSystem.Application.Abstractions;
+using CvManagementSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CvManagementSystem.Infrastructure.Persistence;
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IUnitOfWork
+
+public class ApplicationDbContext : DbContext, IUnitOfWork
 {
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+
     public DbSet<User> Users => Set<User>();
     public DbSet<EmailMessage> EmailMessages => Set<EmailMessage>();
 

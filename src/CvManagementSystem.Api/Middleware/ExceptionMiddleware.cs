@@ -2,13 +2,23 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace CvManagementSystem.Api.Middleware;
-public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+
+public class ExceptionMiddleware
 {
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (Exception exception) when (!context.Response.HasStarted
             && !context.RequestAborted.IsCancellationRequested)
@@ -23,7 +33,9 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
             };
 
             if (!isAccountConflict)
-                logger.LogError(exception, "An unhandled exception occurred while processing the request.");
+            {
+                _logger.LogError(exception, "An unhandled exception occurred while processing the request.");
+            }
 
             context.Response.Clear();
             context.Response.StatusCode = isAccountConflict

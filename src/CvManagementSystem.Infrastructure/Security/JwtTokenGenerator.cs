@@ -7,13 +7,21 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CvManagementSystem.Infrastructure.Security;
-public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerator
+
+public class JwtTokenGenerator : IJwtTokenGenerator
 {
+    private readonly IOptions<JwtOptions> _options;
+
+    public JwtTokenGenerator(IOptions<JwtOptions> options)
+    {
+        _options = options;
+    }
+
     public string Generate(User user)
     {
         ArgumentNullException.ThrowIfNull(user);
 
-        var settings = options.Value;
+        var settings = _options.Value;
         var now = DateTime.UtcNow;
         var credentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SecretKey)),
