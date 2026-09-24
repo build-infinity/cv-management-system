@@ -1,6 +1,5 @@
 using CvManagementSystem.Application.Abstractions;
 
-
 namespace CvManagementSystem.Infrastructure.Security;
 public class BCryptPasswordHasher : IPasswordHasher
 {

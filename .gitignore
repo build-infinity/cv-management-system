@@ -6,3 +6,5 @@ bin/
 .vs/
 .vscode/
 .idea/
+
+.env

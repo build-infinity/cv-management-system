@@ -13,27 +13,27 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         catch (Exception exception) when (!context.Response.HasStarted
             && !context.RequestAborted.IsCancellationRequested)
         {
-            var isDuplicateEmail = exception is DbUpdateException
+            var isAccountConflict = exception is DbUpdateException
             {
                 InnerException: PostgresException
                 {
                     SqlState: PostgresErrorCodes.UniqueViolation,
-                    ConstraintName: "IX_Users_Email"
+                    ConstraintName: "IX_Users_Email" or "IX_Users_GoogleId"
                 }
             };
 
-            if (!isDuplicateEmail)
+            if (!isAccountConflict)
                 logger.LogError(exception, "An unhandled exception occurred while processing the request.");
 
             context.Response.Clear();
-            context.Response.StatusCode = isDuplicateEmail
+            context.Response.StatusCode = isAccountConflict
                 ? StatusCodes.Status409Conflict
                 : StatusCodes.Status500InternalServerError;
 
             await context.Response.WriteAsJsonAsync(new
             {
-                message = isDuplicateEmail
-                    ? "This email is already registered."
+                message = isAccountConflict
+                    ? "This email or Google account is already registered."
                     : "An unexpected error occurred."
             }, context.RequestAborted);
         }
