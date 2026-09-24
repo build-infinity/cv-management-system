@@ -1,54 +1,54 @@
 <!doctype html>
-<html lang="uz">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="same-origin">
   <meta name="color-scheme" content="light">
-  <title>Kirish — CV Workspace</title>
+  <title>Sign in — CV Workspace</title>
   <link rel="stylesheet" href="/css/login.css">
   <script src="/js/login.js" defer></script>
 </head>
 <body>
   <main class="auth-card" aria-labelledby="auth-title">
     <p class="brand">CV Workspace</p>
-    <h1 id="auth-title">Kirish</h1>
-    <p id="auth-subtitle" class="subtitle">Hisobingizga kiring.</p>
-    <noscript><p class="feedback">Davom etish uchun brauzeringizda JavaScript’ni yoqing.</p></noscript>
+    <h1 id="auth-title">Sign in</h1>
+    <p id="auth-subtitle" class="subtitle">Sign in to your account.</p>
+    <noscript><p class="feedback">Enable JavaScript in your browser to continue.</p></noscript>
     <div id="feedback" class="feedback" role="alert" hidden></div>
     <div id="auth-controls">
       <form id="auth-form">
         <div id="name-fields" class="name-fields" hidden>
           <div class="field">
-            <label for="first-name">Ism</label>
+            <label for="first-name">First name</label>
             <input id="first-name" name="firstName" autocomplete="given-name" maxlength="100" disabled>
           </div>
           <div class="field">
-            <label for="last-name">Familiya</label>
+            <label for="last-name">Last name</label>
             <input id="last-name" name="lastName" autocomplete="family-name" maxlength="100" disabled>
           </div>
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="username" placeholder="siz@example.com" maxlength="254" required>
+          <input id="email" name="email" type="email" autocomplete="username" placeholder="you@example.com" maxlength="254" required>
         </div>
         <div class="field">
-          <label for="password">Parol</label>
+          <label for="password">Password</label>
           <div class="password-field">
             <input id="password" name="password" type="password" autocomplete="current-password" maxlength="72" required>
-            <button id="toggle-password" class="password-toggle" type="button" aria-label="Parolni ko‘rsatish" aria-pressed="false">Ko‘rsatish</button>
+            <button id="toggle-password" class="password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
           </div>
-          <p id="password-hint" class="hint" hidden>Kamida 8 ta belgi.</p>
+          <p id="password-hint" class="hint" hidden>At least 8 characters.</p>
         </div>
-        <button id="submit-auth" class="primary-button" type="submit">Kirish</button>
+        <button id="submit-auth" class="primary-button" type="submit">Sign in</button>
       </form>
-      <div class="divider">yoki</div>
-      <a id="google-login" class="google-button" href="/api/auth/google?returnToLogin=true">Google orqali davom etish</a>
-      <p class="mode-switch"><span id="mode-prompt">Hisobingiz yo‘qmi?</span> <a id="switch-mode" href="/login.html?mode=signup">Ro‘yxatdan o‘tish</a></p>
-      <button id="resend-email" class="text-button resend" type="button">Tasdiqlash xatini qayta yuborish</button>
+      <div class="divider">or</div>
+      <a id="google-login" class="google-button" href="/api/auth/google?returnToLogin=true">Continue with Google</a>
+      <p class="mode-switch"><span id="mode-prompt">New here?</span> <a id="switch-mode" href="/login.html?mode=signup">Sign up</a></p>
+      <button id="resend-email" class="text-button resend" type="button">Resend verification email</button>
     </div>
     <div id="success-panel" hidden tabindex="-1">
-      <button id="switch-account" class="secondary-button" type="button">Chiqish</button>
+      <button id="switch-account" class="secondary-button" type="button">Sign out</button>
     </div>
   </main>
 </body>

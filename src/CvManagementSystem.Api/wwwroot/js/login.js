@@ -28,17 +28,17 @@
   function resetPassword() {
     password.value = '';
     password.type = 'password';
-    toggle.textContent = 'Ko‘rsatish';
+    toggle.textContent = 'Show';
     toggle.setAttribute('aria-pressed', 'false');
-    toggle.setAttribute('aria-label', 'Parolni ko‘rsatish');
+    toggle.setAttribute('aria-label', 'Show password');
   }
 
   function setMode(signup) {
     signingUp = signup;
-    const label = signup ? 'Ro‘yxatdan o‘tish' : 'Kirish';
+    const label = signup ? 'Sign up' : 'Sign in';
     title.textContent = label;
     document.title = label + ' — CV Workspace';
-    subtitle.textContent = signup ? 'Yangi hisob yarating.' : 'Hisobingizga kiring.';
+    subtitle.textContent = signup ? 'Create your account.' : 'Sign in to your account.';
     submit.textContent = label;
     document.getElementById('name-fields').hidden = !signup;
     for (const input of [firstName, lastName]) {
@@ -52,8 +52,8 @@
     if (signup) password.setAttribute('aria-describedby', 'password-hint');
     else password.removeAttribute('aria-describedby');
     document.getElementById('password-hint').hidden = !signup;
-    document.getElementById('mode-prompt').textContent = signup ? 'Hisobingiz bormi?' : 'Hisobingiz yo‘qmi?';
-    switchMode.textContent = signup ? 'Kirish' : 'Ro‘yxatdan o‘tish';
+    document.getElementById('mode-prompt').textContent = signup ? 'Already have an account?' : 'New here?';
+    switchMode.textContent = signup ? 'Sign in' : 'Sign up';
     switchMode.href = signup ? '/login.html' : '/login.html?mode=signup';
     resend.hidden = signup;
     resetPassword();
@@ -67,7 +67,7 @@
     for (const input of [firstName, lastName, email, password]) input.readOnly = value;
     for (const link of [google, switchMode]) link.setAttribute('aria-disabled', String(value));
     form.setAttribute('aria-busy', String(value));
-    submit.textContent = value ? (label || (signingUp ? 'Hisob yaratilmoqda…' : 'Kirilmoqda…')) : (signingUp ? 'Ro‘yxatdan o‘tish' : 'Kirish');
+    submit.textContent = value ? (label || (signingUp ? 'Creating account…' : 'Signing in…')) : (signingUp ? 'Sign up' : 'Sign in');
   }
 
   async function request(url, data) {
@@ -88,31 +88,31 @@
 
   function complete(body) {
     if (!body || typeof body.accessToken !== 'string' || !body.accessToken) {
-      message('Kirish javobi olinmadi. Qayta urinib ko‘ring.');
+      message('Could not complete sign-in. Please try again.');
       return;
     }
     try { sessionStorage.setItem(tokenKey, body.accessToken); }
-    catch { message('Brauzer sessiyani saqlashga ruxsat bermadi. Brauzer sozlamalarini tekshiring.'); return; }
+    catch { message('Your browser could not save your session. Check your browser settings.'); return; }
     resetPassword();
     message('');
     controls.hidden = true;
     success.hidden = false;
-    title.textContent = 'Hisobingizga kirdingiz';
-    subtitle.textContent = 'Kirish muvaffaqiyatli yakunlandi.';
+    title.textContent = 'You’re signed in';
+    subtitle.textContent = 'You have signed in successfully.';
     success.focus();
   }
 
   function failure(result, isGoogle = false) {
-    if (result.status === 403) message('Emailingiz hali tasdiqlanmagan. Xatingizdagi havolani oching yoki tasdiqlash xatini qayta yuboring.');
-    else if (result.status === 401) message(isGoogle ? 'Google orqali kirish yakunlanmadi. Qayta urinib ko‘ring.' : 'Email yoki parol noto‘g‘ri. Tekshirib, qayta kiriting.');
-    else if (result.status === 409) message('Bu email bilan hisob mavjud. Kirish formasidan foydalaning.');
-    else if (result.status === 429) message('So‘rovlar juda ko‘p. Birozdan keyin qayta urinib ko‘ring.');
-    else if (result.status === 400) message('Kiritilgan ma’lumotlarni tekshiring va qayta urinib ko‘ring.');
-    else message('Server bilan bog‘lanishda muammo yuz berdi. Birozdan keyin qayta urinib ko‘ring.');
+    if (result.status === 403) message('Your email is not verified yet. Open the link in your email or resend the verification email.');
+    else if (result.status === 401) message(isGoogle ? 'Google sign-in could not be completed. Please try again.' : 'Incorrect email or password. Please try again.');
+    else if (result.status === 409) message('An account with this email already exists. Switch to sign in.');
+    else if (result.status === 429) message('Too many requests. Please try again later.');
+    else if (result.status === 400) message('Check your details and try again.');
+    else message('Could not reach the server. Please try again later.');
   }
 
   function networkError(error) {
-    message(error.name === 'AbortError' ? 'So‘rov vaqti tugadi. Qayta urinib ko‘ring.' : 'Ulanishni tekshiring va qayta urinib ko‘ring.');
+    message(error.name === 'AbortError' ? 'The request timed out. Please try again.' : 'Check your connection and try again.');
   }
 
   for (const input of [firstName, lastName]) {
@@ -121,9 +121,9 @@
   toggle.addEventListener('click', () => {
     const visible = password.type === 'password';
     password.type = visible ? 'text' : 'password';
-    toggle.textContent = visible ? 'Yashirish' : 'Ko‘rsatish';
+    toggle.textContent = visible ? 'Hide' : 'Show';
     toggle.setAttribute('aria-pressed', String(visible));
-    toggle.setAttribute('aria-label', visible ? 'Parolni yashirish' : 'Parolni ko‘rsatish');
+    toggle.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
   });
   switchMode.addEventListener('click', event => {
     event.preventDefault();
@@ -138,12 +138,12 @@
     if (busy) return;
     if (signingUp) {
       for (const input of [firstName, lastName]) {
-        input.setCustomValidity(input.value.trim() ? '' : 'Bu maydonni to‘ldiring.');
+        input.setCustomValidity(input.value.trim() ? '' : 'Please fill out this field.');
       }
     }
     if (!form.reportValidity()) return;
     if (new TextEncoder().encode(password.value).length > 72) {
-      message('Parol juda uzun. Qisqaroq parol kiriting.'); return;
+      message('This password is too long. Please use a shorter password.'); return;
     }
     const data = { email: email.value.trim(), password: password.value };
     if (signingUp) Object.assign(data, { firstName: firstName.value.trim(), lastName: lastName.value.trim() });
@@ -155,7 +155,7 @@
       else if (signingUp) {
         setMode(false);
         history.replaceState(null, '', '/login.html');
-        message('Hisob yaratildi. Emailingizga yuborilgan havola orqali manzilingizni tasdiqlang, so‘ng kiring. Spam papkasini ham tekshiring.', 'success');
+        message('Account created. Open the verification link in your email, then sign in. Check your spam folder too.', 'success');
         password.focus();
       } else complete(result.body);
     } catch (error) { networkError(error); }
@@ -165,10 +165,10 @@
     if (busy) return;
     if (!email.reportValidity()) { email.focus(); return; }
     message('');
-    loading(true, 'Xat yuborilmoqda…');
+    loading(true, 'Sending email…');
     try {
       const result = await request('/api/auth/resend-verification', { email: email.value.trim() });
-      if (result.ok) message('Agar hisobingiz tasdiqlanmagan bo‘lsa, tasdiqlash xati yuboriladi. Spam papkasini ham tekshiring.', 'success');
+      if (result.ok) message('If your account needs verification, an email will be sent. Check your spam folder too.', 'success');
       else failure(result);
     } catch (error) { networkError(error); }
     finally { loading(false); }
@@ -188,10 +188,10 @@
   const googleResult = params.get('google');
   setMode(!googleResult && params.get('mode') === 'signup');
   if (googleResult) history.replaceState(null, '', location.pathname);
-  if (googleResult === 'error') message('Google orqali kirish bekor qilindi yoki amalga oshmadi. Qayta urinib ko‘ring.');
+  if (googleResult === 'error') message('Google sign-in was cancelled or could not be completed. Please try again.');
   if (googleResult === 'callback') {
-    loading(true, 'Google orqali kirilmoqda…');
-    message('Google hisobingiz tekshirilmoqda…', 'info');
+    loading(true, 'Signing in with Google…');
+    message('Checking your Google account…', 'info');
     request('/api/auth/google/callback')
       .then(result => result.ok ? complete(result.body) : failure(result, true))
       .catch(networkError).finally(() => loading(false));
